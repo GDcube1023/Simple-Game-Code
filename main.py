@@ -1,34 +1,38 @@
 import pygame
-from player import Player
+import os
+from player2 import Player
+from bullet import Bullet
 pygame.init()
 
-# constants
-my_player = Player(100, 200)
-WIDTH = 1000
-HEIGHT = 600
+bullets = pygame.sprite.Group()
+
+WIDTH, HEIGHT = 1280, 720
 FPS = 60
 WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Simple Game")
+screen = pygame.display.set_mode((WIDTH,HEIGHT))
+pygame.display.set_caption("Simple 2D Shooting Game")
 clock = pygame.time.Clock()
+
+my_player = Player(300, 200)
+my_bullet = Bullet(300, 200, 1)
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    if my_player.animation_state == "Idle":
-        my_player.change_animation("Idle")
-    if my_player.animation_state == "Walk":
-        my_player.change_animation("Walk")
-    if my_player.animation_state == "Run":
-        my_player.change_animation("Run")
 
-    screen.fill((WHITE))
+    
+        my_player.change_animation(my_player.animation_state)
+    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                bullet = Bullet(my_player.rect.centerx, my_player.rect.centery, my_player.direction)
+                bullets.add(bullet)
+
+    screen.fill(WHITE)
+    bullets.update()
+    bullets.draw(screen)
     my_player.update(screen)
     pygame.display.update()
     clock.tick(FPS)
